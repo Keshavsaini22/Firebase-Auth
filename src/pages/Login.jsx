@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { TextField, Box, Stack, Button } from '@mui/material';
 import { toast } from 'react-toastify';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate();
+    const [value, setValue] = useState()
+
     return (
         <Stack height={'100vh'}>
             <Box sx={{ fontSize: '30px', fontWeight: '700' }}>Login Here</Box>
@@ -35,7 +37,13 @@ function Login() {
                 </Stack>
                 <Stack gap={2} alignItems={'center'}>
                     <Box sx={{ fontSize: '18px', fontWeight: '600' }}>Or</Box>
-                    <Button variant='contained' fullWidth>Sign In With Google</Button>
+                    <Button variant='contained' fullWidth onClick={() => {
+                        signInWithPopup(auth, provider).then((data) => {
+                            setValue(data.user.email)
+                            localStorage.setItem("email", data.user.email)
+                            navigate('/home')
+                        })
+                    }}>Sign In With Google</Button>
                 </Stack>
             </Stack>
         </Stack>
